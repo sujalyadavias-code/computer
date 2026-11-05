@@ -1,0 +1,34 @@
+name: Windows RDP via Tailscale
+
+on: 
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: windows-latest
+    steps:
+    - name: Download and Install Tailscale
+      run: |
+        Invoke-WebRequest -Uri https://tailscale.com -OutFile tailscale-setup.exe
+        Start-Process -FilePath .\tailscale-setup.exe -ArgumentList "/qn" -Wait
+        
+    - name: Connect to Tailscale Network
+      shell: cmd
+      env:
+        TAILSCALE_KEY: ${{ secrets.TAILSCALE_AUTH_KEY }}
+      run: |
+        "C:\Program Files\Tailscale\tailscale.exe" up --authkey=%TAILSCALE_KEY% --accept-routes
+
+    - name: Configure RDP Session
+      run: |
+        net user administrator Password123! /add
+        net localgroup administrators administrator /add
+
+    - name: Keep Alive Loop (6 Hours)
+      run: |
+        $seconds = 21600
+        while ($seconds -gt 0) {
+            Write-Output "RDP is online. Time remaining: $seconds seconds."
+            Start-Sleep -Seconds 60
+            $seconds -= 60
+        }
