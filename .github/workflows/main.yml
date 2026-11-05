@@ -7,10 +7,9 @@ jobs:
   build:
     runs-on: windows-latest
     steps:
-    - name: Download and Install Tailscale
+    - name: Install Tailscale via Choco
       run: |
-        Invoke-WebRequest -Uri "https://tailscale.com" -OutFile "tailscale-setup.exe"
-        Start-Process -FilePath ".\tailscale-setup.exe" -ArgumentList "/qn" -Wait
+        choco install tailscale -y
         
     - name: Connect to Tailscale Network
       shell: cmd
