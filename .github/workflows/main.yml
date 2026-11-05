@@ -16,7 +16,7 @@ jobs:
       env:
         TAILSCALE_KEY: ${{ secrets.TAILSCALE_AUTH_KEY }}
       run: |
-        "C:\ProgramData\chocolatey\bin\tailscale.exe" up --authkey=%TAILSCALE_KEY% --accept-routes
+        "C:\Program Files\Tailscale\tailscale.exe" up --authkey=%TAILSCALE_KEY% --accept-routes
 
     - name: Configure RDP Session
       run: |
