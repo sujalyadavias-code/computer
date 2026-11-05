@@ -7,10 +7,17 @@ jobs:
   build:
     runs-on: windows-latest
     steps:
+    - name: Download and Install Tailscale
+      run: |
+        Invoke-WebRequest -Uri "https://tailscale.com" -OutFile "tailscale-setup.exe"
+        Start-Process -FilePath ".\tailscale-setup.exe" -ArgumentList "/qn" -Wait
+        
     - name: Connect to Tailscale Network
-      uses: tailscale/github-action@v2
-      with:
-        authkey: ${{ secrets.TAILSCALE_AUTH_KEY }}
+      shell: cmd
+      env:
+        TAILSCALE_KEY: ${{ secrets.TAILSCALE_AUTH_KEY }}
+      run: |
+        "C:\Program Files\Tailscale\tailscale.exe" up --authkey=%TAILSCALE_KEY% --accept-routes
 
     - name: Configure RDP Session
       run: |
